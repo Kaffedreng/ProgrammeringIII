@@ -3,6 +3,7 @@ using OpenPop.Mime;
 using OpenPop.Pop3;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SQLite;
 
 namespace MailClient_WPF
 {
@@ -25,8 +27,69 @@ namespace MailClient_WPF
     {
         public MainWindow()
         {
+
             InitializeComponent();
-            //FetchAllMessages(Properties.Settings.Default.Pop3Server, 110, false, Properties.Settings.Default.Username, Properties.Settings.Default.Password);
+            SQLiteConnection Con = new SQLiteConnection("Data Source=mailsDB.s3db;Version=3;");
+            Con.Open();
+            SQLiteCommand Cmd = new SQLiteCommand(Con);
+            Cmd.CommandText = @"INSERT INTO EMails ";
+            Con.Close();
+
+
+        }
+/*
+        public DataTable GetDataTable(string sql)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                SQLiteConnection cnn = new SQLiteConnection(dbConnection);
+                cnn.Open();
+                SQLiteCommand mycommand = new SQLiteCommand(cnn);
+                mycommand.CommandText = sql;
+                SQLiteDataReader reader = mycommand.ExecuteReader();
+                dt.Load(reader);
+                reader.Close();
+                cnn.Close();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            return dt;
+        }
+        */
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            if (Properties.Settings.Default.Username != "")
+            {
+                List<Message> MailList = FetchAllMessages(Properties.Settings.Default.Pop3Server, Properties.Settings.Default.Port, Properties.Settings.Default.SSL, Properties.Settings.Default.Username, Properties.Settings.Default.Password);
+
+                foreach (Message MailItem in MailList)
+                {
+                    MailOverView.Items.Add(new Mail { Sender = MailItem.Headers.From.DisplayName, Subject = MailItem.Headers.Subject.ToString(), MessageID = MailItem.Headers.MessageId.ToString() });
+                }
+                MailOverView.SelectedIndex = 0;
+
+            }
+        }
+
+        /// <summary>
+        /// Example showing:
+        ///  - how to find a html version in a Message
+        ///  - how to save MessageParts to file
+        /// </summary>
+        /// <param name="message">The message to examine for html</param>
+        public static void FindHtmlInMessage(Message message)
+        {
+            MessagePart html = message.FindFirstHtmlVersion();
+            if (html != null)
+            {
+                // Save the plain text to a file, database or anything you like
+                html.Save(new FileInfo("html.txt"));
+            }
         }
 
         /// <summary>
@@ -39,7 +102,7 @@ namespace MailClient_WPF
         /// <param name="username">Username of the user on the server</param>
         /// <param name="password">Password of the user on the server</param>
         /// <returns>All Messages on the POP3 server</returns>
-        public static List<Message> FetchAllMessages(string hostname, int port, bool useSsl, string username, string password)
+        public List<Message> FetchAllMessages(string hostname, int port, bool useSsl, string username, string password)
         {
             // The client disconnects from the server when being disposed
             using (Pop3Client client = new Pop3Client())
@@ -61,6 +124,7 @@ namespace MailClient_WPF
                 // Most servers give the latest message the highest number
                 for (int i = messageCount; i > 0; i--)
                 {
+                    //MailOverView.Items.Add(new Mail { Sender = a.Headers.From.DisplayName, Subject = foo.Headers.Subject.ToString(), MessageID = foo.Headers.MessageId.ToString() });
                     allMessages.Add(client.GetMessage(i));
                 }
 
@@ -75,5 +139,18 @@ namespace MailClient_WPF
             childWindow.Show();
         }
 
+        private void MailOverView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+    }
+    public class Mail
+    {
+        public string Sender { get; set; }
+        public string Subject { get; set; }
+        public bool Selected { get; set; }
+        public string MessageID { get; set; }
+        
     }
 }

@@ -26,14 +26,34 @@ namespace MailClient_WPF
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
+            int intPort = 0;
+
+            if (txtPassword.Password == "") { 
+            
+            }
             Properties.Settings.Default.Password = txtPassword.Password;
             Properties.Settings.Default.Pop3Server = txtPop.Text;
             Properties.Settings.Default.Username = txtUsername.Text;
-            //Properties.Settings.Default.Port = intPort.Value;
+            
+            if (Int32.TryParse(txtPort.Text, out intPort)) {
+                Properties.Settings.Default.Port = intPort;
+            }
+            else {
+                MessageBox.Show("The port value has to be a number.");
+            }
+
+            if (chkSSL.IsChecked.Value == true) {
+                //txtPort.Text == "995";
+            }
             Properties.Settings.Default.SSL = chkSSL.IsChecked.Value;
             Properties.Settings.Default.Save();
 
             MessageBox.Show("User settings have been saved.", "Saved.");
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

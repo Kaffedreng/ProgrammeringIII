@@ -25,7 +25,7 @@ namespace MailClient_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("example@gmail.com")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string Username {
             get {
                 return ((string)(this["Username"]));
@@ -49,7 +49,7 @@ namespace MailClient_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("pop.gmail.com")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string Pop3Server {
             get {
                 return ((string)(this["Pop3Server"]));
@@ -61,7 +61,6 @@ namespace MailClient_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("110")]
         public int Port {
             get {
                 return ((int)(this["Port"]));
@@ -73,7 +72,6 @@ namespace MailClient_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool SSL {
             get {
                 return ((bool)(this["SSL"]));
